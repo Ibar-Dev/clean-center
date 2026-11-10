@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Base de datos y logs
+backend/data/
+*.db
+*.db-wal
+*.db-shm
+*.log
+
+# Node / Angular
+node_modules/
+frontend/dist/
+frontend/.angular/
+npm-debug.log*
+
+# Entorno
+.env
+.env.local
+
+# Editores / sistema
+.idea/
+.vscode/
+.DS_Store
