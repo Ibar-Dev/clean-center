@@ -46,7 +46,7 @@ class Settings(BaseSettings):
     store_cuit: str = Field(default="30-00000000-0", min_length=8, max_length=20)
     store_address: str = Field(default="Dirección a configurar", min_length=3, max_length=250)
     store_phone: str = Field(default="+54 11 0000-0000", min_length=6, max_length=40)
-    store_email: EmailStr = "contacto@cleancenter.com.ar"
+    store_email: EmailStr = "Karentorresbarreiro@gmail.com"
     store_hours: str = Field(
         default="Lun a Vie de 09:00 a 18:00, Sáb de 09:00 a 13:00",
         min_length=3,
