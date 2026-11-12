@@ -10,7 +10,7 @@ const FALLBACK_CONFIG: AppConfig = {
   store_cuit: '30-00000000-0',
   store_address: 'Dirección a configurar',
   store_phone: '+54 11 0000-0000',
-  store_email: 'contacto@cleancenter.com.ar',
+  store_email: 'Karentorresbarreiro@gmail.com',
   store_hours: 'Lun a Vie de 09:00 a 18:00, Sáb de 09:00 a 13:00',
   reservation_expiration_hours: 48,
   min_pickup_lead_minutes: 60,
