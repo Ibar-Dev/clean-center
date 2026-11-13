@@ -17,10 +17,10 @@
           "is_active": true
         },
         {
-          "name": "Papel Delfín (30x100m) - x5U",
+          "name": "Papel Delfín (30x100m) - Pack x5",
           "slug": "papel-delfin-30x100m-x5u",
           "description": "",
-          "unit": "Pack x5 u.",
+          "unit": "Pack x5",
           "price": "4000.00",
           "stock": 50,
           "is_active": true
@@ -35,10 +35,10 @@
           "is_active": true
         },
         {
-          "name": "Papel Máximo (30x80m) - x5U",
+          "name": "Papel Máximo (30x80m) - Pack x5",
           "slug": "papel-maximo-30x80m-x5u",
           "description": "",
-          "unit": "Pack x5 u.",
+          "unit": "Pack x5",
           "price": "3500.00",
           "stock": 50,
           "is_active": true
@@ -82,7 +82,7 @@
         {
           "name": "Rollo Cocina Renacer y Paula (200 paños) - Bolsón",
           "slug": "rollo-cocina-renacer-y-paula-200-panos-bolson",
-          "description": "",
+          "description": "Consultar en la tienda",
           "unit": "Bolsón",
           "price": "11000.00",
           "stock": 50,
@@ -549,7 +549,7 @@
         {
           "name": "Cubeteras (Pack x2)",
           "slug": "cubeteras-pack-x2",
-          "description": "",
+          "description": "Consultar en la tienda",
           "unit": "1 u. / Pack x2",
           "price": "3000.00",
           "stock": 50,
@@ -567,7 +567,7 @@
         {
           "name": "Jabonera Simple",
           "slug": "jabonera-simple",
-          "description": "",
+          "description": "Consultar en la tienda",
           "unit": "1 u.",
           "price": "2000.00",
           "stock": 50,
@@ -576,7 +576,7 @@
         {
           "name": "Jabonera con Tapa",
           "slug": "jabonera-con-tapa",
-          "description": "",
+          "description": "Consultar en la tienda",
           "unit": "1 u.",
           "price": "1200.00",
           "stock": 50,
@@ -594,7 +594,7 @@
         {
           "name": "Jabón Blanco (x1)",
           "slug": "jabon-blanco-x1",
-          "description": "",
+          "description": "Consultar en la tienda",
           "unit": "1 u.",
           "price": "3500.00",
           "stock": 50,
@@ -603,7 +603,7 @@
         {
           "name": "Jabón Blanco (x2)",
           "slug": "jabon-blanco-x2",
-          "description": "",
+          "description": "Consultar en la tienda",
           "unit": "Pack x2",
           "price": "3000.00",
           "stock": 50,
