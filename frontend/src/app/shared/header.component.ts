@@ -142,6 +142,16 @@ import { ConfigService } from '../core/services/config.service';
       .cart-link:hover {
         background: var(--surface-alt);
       }
+      .header-actions a.btn-ghost:link,
+      .header-actions a.btn-ghost:visited {
+        color: var(--ink);
+        text-decoration: none;
+      }
+      .header-actions a.btn-ghost:hover,
+      .header-actions a.btn-ghost:focus-visible {
+        color: var(--teal-700);
+        border-color: var(--teal-300);
+      }
       .cart-badge {
         display: grid;
         place-items: center;

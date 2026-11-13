@@ -214,3 +214,82 @@ def test_reservation_snapshots_survive_price_change(
     assert item["product_name"] == product["name"]
     assert item["unit_price"] == "1500.50"
     assert lookup.json()["total_amount"] == created["total_amount"]
+
+
+def test_reservation_code_is_consistent_across_endpoints(
+    client: TestClient,
+    admin_headers: dict[str, str],
+    product: dict,
+) -> None:
+    created = client.post("/api/reservations", json=_payload(product["id"])).json()
+
+    lookup = client.post(
+        "/api/reservations/lookup",
+        json={"code": created["code"], "email": created["customer_email"]},
+    ).json()
+    admin = client.get(
+        f"/api/admin/reservations?search={created['code']}",
+        headers=admin_headers,
+    ).json()
+
+    assert lookup["code"] == created["code"]
+    assert lookup["customer_email"] == created["customer_email"]
+    assert any(item["code"] == created["code"] for item in admin["items"])
+
+
+def test_notification_failures_do_not_break_reservation(
+    client: TestClient,
+    product: dict,
+    monkeypatch,
+) -> None:
+    def boom(*_args: object, **_kwargs: object) -> None:
+        raise RuntimeError("proveedor caído")
+
+    monkeypatch.setattr("app.services.email.send_email", boom)
+    monkeypatch.setattr("app.services.telegram.send_telegram_message", boom)
+
+    response = client.post("/api/reservations", json=_payload(product["id"]))
+
+    assert response.status_code == 201, response.text
+    assert response.json()["code"].startswith("CC-")
+
+    stock = client.get(f"/api/products/{product['id']}").json()["stock"]
+    assert stock == 9
+
+
+def test_create_reservation_is_idempotent_with_same_key(
+    client: TestClient,
+    product: dict,
+) -> None:
+    import uuid
+
+    key = str(uuid.uuid4())
+    payload = _payload(product["id"], quantity=2)
+    payload["idempotency_key"] = key
+
+    first = client.post("/api/reservations", json=payload)
+    assert first.status_code == 201, first.text
+
+    stock_after_first = client.get(f"/api/products/{product['id']}").json()["stock"]
+
+    second = client.post("/api/reservations", json=payload)
+
+    assert second.status_code == 200, second.text
+    assert second.json()["code"] == first.json()["code"]
+    assert second.json()["total_amount"] == first.json()["total_amount"]
+
+    # El reintento no vuelve a descontar stock.
+    stock_after_second = client.get(f"/api/products/{product['id']}").json()["stock"]
+    assert stock_after_second == stock_after_first
+
+
+def test_reservations_without_key_are_not_deduplicated(
+    client: TestClient,
+    product: dict,
+) -> None:
+    first = client.post("/api/reservations", json=_payload(product["id"]))
+    second = client.post("/api/reservations", json=_payload(product["id"]))
+
+    assert first.status_code == 201
+    assert second.status_code == 201
+    assert first.json()["code"] != second.json()["code"]

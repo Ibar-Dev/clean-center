@@ -73,8 +73,7 @@ import { LegalService } from '../core/services/legal.service';
           </a>
         </div>
         <p>
-          {{ config.config().store_legal_name }} · CUIT {{ config.config().store_cuit }} ·
-          {{ config.config().store_address }}
+          {{ config.config().store_legal_name }} · {{ config.config().store_address }}
         </p>
         <p class="tiny">
           Precios en pesos argentinos. El pago se realiza exclusivamente en el local al retirar.
@@ -150,13 +149,28 @@ import { LegalService } from '../core/services/legal.service';
         font-size: 0.92rem;
       }
       .footer-list a,
-      .footer-legal a {
+      .footer-list a:link,
+      .footer-list a:visited,
+      .footer-legal a,
+      .footer-legal a:link,
+      .footer-legal a:visited {
         color: #dbe9e6;
         text-decoration: none;
       }
       .footer-list a:hover,
       .footer-legal a:hover {
         color: var(--lime-400);
+      }
+      .footer-brand a.btn-lime:link,
+      .footer-brand a.btn-lime:visited {
+        color: var(--teal-950);
+        text-decoration: none;
+      }
+      .footer-brand a.btn-lime:hover,
+      .footer-brand a.btn-lime:focus-visible {
+        background: #d9f99d;
+        border-color: #d9f99d;
+        color: var(--teal-950);
       }
       .footer-legal {
         border-top: 1px solid rgba(255, 255, 255, 0.12);

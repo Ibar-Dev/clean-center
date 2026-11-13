@@ -18,6 +18,21 @@ type CheckoutControl =
   | 'terms_accepted'
   | 'privacy_consent';
 
+const IDEMPOTENCY_STORAGE_KEY = 'clean_center_checkout_idempotency';
+
+function createIdempotencyKey(): string {
+  const cryptoObj = globalThis.crypto;
+  if (cryptoObj && typeof cryptoObj.randomUUID === 'function') {
+    return cryptoObj.randomUUID();
+  }
+  // Fallback UUID v4 para contextos sin crypto.randomUUID (HTTP no seguro).
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (char) => {
+    const random = Math.floor(Math.random() * 16);
+    const value = char === 'x' ? random : (random & 0x3) | 0x8;
+    return value.toString(16);
+  });
+}
+
 @Component({
   selector: 'app-checkout-page',
   imports: [ReactiveFormsModule, RouterLink],
@@ -449,6 +464,29 @@ export class CheckoutPageComponent implements OnInit {
     return formatMoney(Number(price) * quantity);
   }
 
+  private checkoutIdempotencyKey(): string {
+    try {
+      const stored = sessionStorage.getItem(IDEMPOTENCY_STORAGE_KEY);
+      if (stored) {
+        return stored;
+      }
+      const key = createIdempotencyKey();
+      sessionStorage.setItem(IDEMPOTENCY_STORAGE_KEY, key);
+      return key;
+    } catch {
+      // Si el navegador bloquea sessionStorage, se genera una clave por intento.
+      return createIdempotencyKey();
+    }
+  }
+
+  private clearIdempotencyKey(): void {
+    try {
+      sessionStorage.removeItem(IDEMPOTENCY_STORAGE_KEY);
+    } catch {
+      // Sin sessionStorage no hay nada que limpiar.
+    }
+  }
+
   async submit(): Promise<void> {
     if (this.cart.isEmpty()) {
       await this.router.navigate(['/carrito']);
@@ -477,8 +515,10 @@ export class CheckoutPageComponent implements OnInit {
         })),
         terms_accepted: value.terms_accepted,
         privacy_consent: value.privacy_consent,
+        idempotency_key: this.checkoutIdempotencyKey(),
       });
 
+      this.clearIdempotencyKey();
       this.cart.clear();
       this.toast.success('Reserva creada con éxito.');
       await this.router.navigate(['/confirmacion', reservation.code]);

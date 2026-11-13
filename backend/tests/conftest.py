@@ -13,6 +13,11 @@ os.environ["JWT_SECRET_KEY"] = "test-secret-key-with-at-least-32-characters"
 os.environ["ADMIN_USERNAME"] = "admin"
 os.environ["ADMIN_PASSWORD"] = "test-admin-password"
 os.environ["WHATSAPP_PHONE"] = "5491123456789"
+# Evita envíos reales durante los tests; cada test configura lo que necesite.
+os.environ["SMTP_HOST"] = ""
+os.environ["ADMIN_EMAIL"] = ""
+os.environ["TELEGRAM_BOT_TOKEN"] = ""
+os.environ["TELEGRAM_CHAT_ID"] = ""
 os.environ["STORE_NAME"] = "Clean Center Test"
 os.environ["STORE_ADDRESS"] = "Av. Test 123"
 

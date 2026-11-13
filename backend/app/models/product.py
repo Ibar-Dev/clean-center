@@ -17,6 +17,7 @@ class Product(SQLModel, table=True):
 
     id: int | None = Field(default=None, primary_key=True)
     name: str = Field(index=True, max_length=160)
+    slug: str | None = Field(default=None, index=True, unique=True, max_length=160)
     description: str = Field(default="", max_length=2000)
     price: Decimal = Field(sa_column=Column(Numeric(12, 2), nullable=False))
     unit: str = Field(max_length=60)

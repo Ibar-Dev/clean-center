@@ -73,6 +73,14 @@ def _load_reservation(
     return session.exec(statement).first()
 
 
+def _find_by_idempotency_key(session: Session, key: str) -> Reservation | None:
+    return session.exec(
+        select(Reservation)
+        .options(selectinload(Reservation.items))
+        .where(Reservation.idempotency_key == key)
+    ).first()
+
+
 def _read_reservation(reservation: Reservation) -> ReservationRead:
     items = sorted(reservation.items, key=lambda item: item.id or 0)
     return ReservationRead(
@@ -138,7 +146,18 @@ def _reserve_items(
     return items, total.quantize(Decimal("0.01"))
 
 
-def create_reservation(session: Session, payload: ReservationCreate) -> ReservationRead:
+def create_reservation(
+    session: Session, payload: ReservationCreate
+) -> tuple[ReservationRead, bool]:
+    if payload.idempotency_key is not None:
+        existing = _find_by_idempotency_key(session, str(payload.idempotency_key))
+        if existing is not None:
+            logger.bind(
+                event="reservation.idempotent_replay",
+                reservation_code=existing.code,
+            ).info("Reserva devuelta por clave de idempotencia")
+            return _read_reservation(existing), False
+
     now = datetime.now(UTC)
     pickup_utc = payload.pickup_date.astimezone(UTC)
     min_pickup = now + timedelta(seconds=settings.min_pickup_lead_seconds)
@@ -162,6 +181,7 @@ def create_reservation(session: Session, payload: ReservationCreate) -> Reservat
         )
 
     expires_at = now + timedelta(seconds=settings.reservation_expiration_seconds)
+    idempotency_key = str(payload.idempotency_key) if payload.idempotency_key is not None else None
 
     last_error: Exception | None = None
     for _attempt in range(5):
@@ -170,6 +190,7 @@ def create_reservation(session: Session, payload: ReservationCreate) -> Reservat
             items, total = _reserve_items(session, payload)
             reservation = Reservation(
                 code=code,
+                idempotency_key=idempotency_key,
                 customer_name=payload.customer_name,
                 customer_last_name=payload.customer_last_name,
                 customer_email=str(payload.customer_email).lower(),
@@ -206,7 +227,7 @@ def create_reservation(session: Session, payload: ReservationCreate) -> Reservat
                     status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                     detail="No se pudo recuperar la reserva creada",
                 )
-            return _read_reservation(loaded)
+            return _read_reservation(loaded), True
         except StockError as exc:
             session.rollback()
             raise HTTPException(
@@ -215,6 +236,14 @@ def create_reservation(session: Session, payload: ReservationCreate) -> Reservat
             ) from exc
         except IntegrityError as exc:
             session.rollback()
+            if idempotency_key is not None:
+                existing = _find_by_idempotency_key(session, idempotency_key)
+                if existing is not None:
+                    logger.bind(
+                        event="reservation.idempotent_replay",
+                        reservation_code=existing.code,
+                    ).info("Reserva recuperada tras colisión de idempotencia")
+                    return _read_reservation(existing), False
             last_error = exc
             logger.bind(event="reservation.code_collision", code=code).warning(
                 "Colisión de código de reserva, reintentando"

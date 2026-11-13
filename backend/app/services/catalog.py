@@ -10,7 +10,7 @@ from app.schemas.catalog import CategoryRead, ProductPage, ProductRead
 
 
 def list_categories(session: Session) -> list[CategoryRead]:
-    categories = session.exec(select(Category).order_by(Category.name)).all()
+    categories = session.exec(select(Category).order_by(Category.sort_order, Category.name)).all()
     return [CategoryRead.model_validate(category) for category in categories]
 
 

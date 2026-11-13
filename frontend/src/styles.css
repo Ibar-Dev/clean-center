@@ -198,6 +198,43 @@ main {
   width: 100%;
 }
 
+/* Enlaces con apariencia de botón: se neutraliza el color y subrayado por
+   defecto del navegador también en los estados :visited y :focus-visible. */
+a.btn:link,
+a.btn:visited {
+  text-decoration: none;
+}
+
+a.btn-primary:link,
+a.btn-primary:visited {
+  color: #fff;
+}
+
+a.btn-ghost:link,
+a.btn-ghost:visited {
+  color: var(--ink);
+}
+
+a.btn-lime:link,
+a.btn-lime:visited {
+  color: var(--teal-950);
+}
+
+a.btn-danger:link,
+a.btn-danger:visited {
+  color: #fff;
+}
+
+a.btn-whatsapp:link,
+a.btn-whatsapp:visited {
+  color: #052e2b;
+}
+
+.btn:focus-visible {
+  outline: 3px solid var(--teal-300);
+  outline-offset: 2px;
+}
+
 /* Tarjetas */
 .card {
   background: var(--surface);

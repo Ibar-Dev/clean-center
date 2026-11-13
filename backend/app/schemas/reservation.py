@@ -1,6 +1,7 @@
 import re
 from datetime import datetime
 from typing import Self
+from uuid import UUID
 
 from pydantic import (
     BaseModel,
@@ -35,6 +36,7 @@ class ReservationCreate(BaseModel):
     items: list[ReservationItemCreate] = Field(min_length=1, max_length=30)
     terms_accepted: bool
     privacy_consent: bool
+    idempotency_key: UUID | None = None
 
     @field_validator("customer_name", "customer_last_name")
     @classmethod
