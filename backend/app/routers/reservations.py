@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request, status
+from fastapi import APIRouter, BackgroundTasks, Request, Response, status
 
 from app.core.config import settings
 from app.core.deps import SessionDep
@@ -9,7 +9,9 @@ from app.schemas.reservation import (
     ReservationLookupRequest,
     ReservationRead,
 )
+from app.services.email import send_reservation_emails
 from app.services.reservations import cancel_reservation, create_reservation, lookup_reservation
+from app.services.telegram import notify_new_reservation
 
 router = APIRouter(prefix="/reservations", tags=["reservations"])
 
@@ -18,10 +20,20 @@ router = APIRouter(prefix="/reservations", tags=["reservations"])
 @limiter.limit(settings.reservation_rate_limit)
 def create(
     request: Request,
+    response: Response,
     payload: ReservationCreate,
     session: SessionDep,
+    background_tasks: BackgroundTasks,
 ) -> ReservationRead:
-    return create_reservation(session, payload)
+    reservation, created = create_reservation(session, payload)
+    if not created:
+        # Reintento idempotente: se devuelve la reserva existente sin reenviar avisos.
+        response.status_code = status.HTTP_200_OK
+        return reservation
+    # Las notificaciones corren después de la respuesta y nunca revierten la reserva.
+    background_tasks.add_task(send_reservation_emails, reservation)
+    background_tasks.add_task(notify_new_reservation, reservation)
+    return reservation
 
 
 @router.post("/lookup", response_model=ReservationRead)

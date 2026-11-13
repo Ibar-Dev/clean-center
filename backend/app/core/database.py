@@ -62,11 +62,57 @@ def _log_database_error(exception_context) -> None:
     ).log(level, "Error de SQLite/WAL: {}", original)
 
 
+def _table_columns(connection, table: str) -> set[str]:
+    rows = connection.execute(text(f"PRAGMA table_info({table})")).fetchall()
+    return {row[1] for row in rows}
+
+
+def _ensure_column(connection, table: str, column: str, ddl: str) -> None:
+    if column in _table_columns(connection, table):
+        return
+    connection.execute(text(f"ALTER TABLE {table} ADD COLUMN {ddl}"))
+    logger.bind(event="database.column_added", table=table, column=column).info(
+        "Columna agregada por migración ligera"
+    )
+
+
+def _apply_lightweight_migrations(connection) -> None:
+    """Agrega columnas e índices nuevos sin perder datos existentes.
+
+    SQLModel.create_all() solo crea tablas nuevas; para bases ya desplegadas hay que
+    aplicar los cambios de esquema de forma idempotente.
+    """
+    _ensure_column(connection, "products", "slug", "slug VARCHAR(160)")
+    _ensure_column(
+        connection,
+        "categories",
+        "sort_order",
+        "sort_order INTEGER NOT NULL DEFAULT 0",
+    )
+    _ensure_column(
+        connection,
+        "reservations",
+        "idempotency_key",
+        "idempotency_key VARCHAR(64)",
+    )
+    connection.execute(
+        text("CREATE UNIQUE INDEX IF NOT EXISTS ix_products_slug ON products (slug)")
+    )
+    connection.execute(
+        text(
+            "CREATE UNIQUE INDEX IF NOT EXISTS ix_reservations_idempotency_key "
+            "ON reservations (idempotency_key)"
+        )
+    )
+
+
 def init_db() -> None:
     # Importa los modelos para registrar las tablas en SQLModel.metadata.
     from app import models  # noqa: F401
 
     SQLModel.metadata.create_all(engine)
+    with engine.begin() as connection:
+        _apply_lightweight_migrations(connection)
     with engine.connect() as connection:
         journal_mode = connection.execute(text("PRAGMA journal_mode;")).scalar_one()
         synchronous = connection.execute(text("PRAGMA synchronous;")).scalar_one()

@@ -36,6 +36,7 @@ class Reservation(SQLModel, table=True):
 
     id: int | None = Field(default=None, primary_key=True)
     code: str = Field(index=True, unique=True, max_length=12)
+    idempotency_key: str | None = Field(default=None, index=True, unique=True, max_length=64)
     customer_name: str = Field(max_length=80)
     customer_last_name: str = Field(max_length=80)
     customer_email: str = Field(index=True, max_length=254)

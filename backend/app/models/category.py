@@ -15,6 +15,7 @@ class Category(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     name: str = Field(index=True, unique=True, max_length=100)
     slug: str = Field(index=True, unique=True, max_length=120)
+    sort_order: int = Field(default=0, ge=0)
     created_at: datetime = Field(default_factory=utcnow)
 
     products: list["Product"] = Relationship(back_populates="category")

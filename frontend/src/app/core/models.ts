@@ -114,6 +114,7 @@ export interface ReservationCreatePayload {
   items: { product_id: number; quantity: number }[];
   terms_accepted: boolean;
   privacy_consent: boolean;
+  idempotency_key?: string;
 }
 
 export interface ReservationStatusUpdate {

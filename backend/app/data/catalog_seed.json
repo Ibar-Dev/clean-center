@@ -1,0 +1,660 @@
+{
+  "version": "1.0.0",
+  "currency": "ARS",
+  "categories": [
+    {
+      "name": "Papelería y Rollos de Cocina",
+      "slug": "papeleria-y-rollos-de-cocina",
+      "sort_order": 1,
+      "products": [
+        {
+          "name": "Papel Higiénico Premium (x4)",
+          "slug": "papel-higienico-premium-x4",
+          "description": "",
+          "unit": "Pack x4",
+          "price": "1900.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Papel Delfín (30x100m) - x5U",
+          "slug": "papel-delfin-30x100m-x5u",
+          "description": "",
+          "unit": "Pack x5 u.",
+          "price": "4000.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Papel Delfín (30x100m) - Bolsón",
+          "slug": "papel-delfin-30x100m-bolson-30u",
+          "description": "",
+          "unit": "Bolsón 30 u.",
+          "price": "18000.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Papel Máximo (30x80m) - x5U",
+          "slug": "papel-maximo-30x80m-x5u",
+          "description": "",
+          "unit": "Pack x5 u.",
+          "price": "3500.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Papel Máximo (30x80m) - Bolsón",
+          "slug": "papel-maximo-30x80m-bolson-30u",
+          "description": "",
+          "unit": "Bolsón 30 u.",
+          "price": "15000.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Rollo de Cocina (x3)",
+          "slug": "rollo-de-cocina-x3",
+          "description": "",
+          "unit": "Pack x3",
+          "price": "2000.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Rollo Cocina Renacer y Paula (200 paños) - x1",
+          "slug": "rollo-cocina-renacer-y-paula-200-panos-x1",
+          "description": "",
+          "unit": "1 u.",
+          "price": "2500.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Rollo Cocina Renacer y Paula (200 paños) - x3",
+          "slug": "rollo-cocina-renacer-y-paula-200-panos-x3",
+          "description": "",
+          "unit": "Pack x3",
+          "price": "5000.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Rollo Cocina Renacer y Paula (200 paños) - Bolsón",
+          "slug": "rollo-cocina-renacer-y-paula-200-panos-bolson",
+          "description": "",
+          "unit": "Bolsón",
+          "price": "11000.00",
+          "stock": 50,
+          "is_active": true
+        }
+      ]
+    },
+    {
+      "name": "Productos Químicos y Limpieza Líquida",
+      "slug": "productos-quimicos-y-limpieza-liquida",
+      "sort_order": 2,
+      "products": [
+        {
+          "name": "Desodorante para Piso (1 Litro)",
+          "slug": "desodorante-para-piso-1l",
+          "description": "",
+          "unit": "1 Litro",
+          "price": "800.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Desodorante para Piso (5 Litros)",
+          "slug": "desodorante-para-piso-5l",
+          "description": "",
+          "unit": "5 Litros",
+          "price": "3000.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Jabón Líquido Skip (1 Litro)",
+          "slug": "jabon-liquido-skip-1l",
+          "description": "",
+          "unit": "1 Litro",
+          "price": "1600.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Jabón Líquido Skip (5 Litros)",
+          "slug": "jabon-liquido-skip-5l",
+          "description": "",
+          "unit": "5 Litros",
+          "price": "7000.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Jabón Líquido Ariel (1 Litro)",
+          "slug": "jabon-liquido-ariel-1l",
+          "description": "",
+          "unit": "1 Litro",
+          "price": "1600.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Jabón Líquido Ariel (5 Litros)",
+          "slug": "jabon-liquido-ariel-5l",
+          "description": "",
+          "unit": "5 Litros",
+          "price": "7000.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Suavizante Vivere (1 Litro)",
+          "slug": "suavizante-vivere-1l",
+          "description": "",
+          "unit": "1 Litro",
+          "price": "1600.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Suavizante Vivere (5 Litros)",
+          "slug": "suavizante-vivere-5l",
+          "description": "",
+          "unit": "5 Litros",
+          "price": "7000.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Detergente Magistral",
+          "slug": "detergente-magistral-1l",
+          "description": "",
+          "unit": "1 Litro",
+          "price": "1600.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Cloro",
+          "slug": "cloro-1l",
+          "description": "",
+          "unit": "1 Litro",
+          "price": "1500.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Lavandina para Ropa Blanca",
+          "slug": "lavandina-para-ropa-blanca-1l",
+          "description": "",
+          "unit": "1 Litro",
+          "price": "1600.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Lavandina Gel",
+          "slug": "lavandina-gel-1l",
+          "description": "",
+          "unit": "1 Litro",
+          "price": "3000.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Lavandina Común (1 Litro)",
+          "slug": "lavandina-comun-1l",
+          "description": "",
+          "unit": "1 Litro",
+          "price": "750.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Lavandina Común (5 Litros)",
+          "slug": "lavandina-comun-5l",
+          "description": "",
+          "unit": "5 Litros",
+          "price": "3000.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Vinagre de Limpieza",
+          "slug": "vinagre-de-limpieza-1l",
+          "description": "",
+          "unit": "1 Litro",
+          "price": "1800.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Bicarbonato de Sodio",
+          "slug": "bicarbonato-de-sodio-500g",
+          "description": "",
+          "unit": "1/2 Kg",
+          "price": "4500.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Limpiador Crema CIF",
+          "slug": "limpiador-crema-cif-1l",
+          "description": "",
+          "unit": "1 Litro",
+          "price": "3000.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Desengrasante Concentrado",
+          "slug": "desengrasante-concentrado-1l",
+          "description": "",
+          "unit": "1 Litro",
+          "price": "3000.00",
+          "stock": 50,
+          "is_active": true
+        }
+      ]
+    },
+    {
+      "name": "Escobas, Palas y Utensilios de Limpieza",
+      "slug": "escobas-palas-y-utensilios-de-limpieza",
+      "sort_order": 3,
+      "products": [
+        {
+          "name": "Palas Roma \"Sin A\"",
+          "slug": "palas-roma-sin-a",
+          "description": "",
+          "unit": "1 u.",
+          "price": "2200.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Pala con Cabo",
+          "slug": "pala-con-cabo",
+          "description": "",
+          "unit": "1 u.",
+          "price": "4500.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Pala con Goma",
+          "slug": "pala-con-goma",
+          "description": "",
+          "unit": "1 u.",
+          "price": "2400.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Baldes 14 Litros",
+          "slug": "baldes-14-litros",
+          "description": "",
+          "unit": "1 u.",
+          "price": "6000.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Palos para Escoba 1,20m",
+          "slug": "palos-para-escoba-1-20m",
+          "description": "",
+          "unit": "1 u.",
+          "price": "3000.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Palos para Escoba 1,50m",
+          "slug": "palos-para-escoba-1-50m",
+          "description": "",
+          "unit": "1 u.",
+          "price": "3600.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Escoba Perla Colores",
+          "slug": "escoba-perla-colores",
+          "description": "",
+          "unit": "1 u.",
+          "price": "4000.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Escobeta Broom",
+          "slug": "escobeta-broom",
+          "description": "",
+          "unit": "1 u.",
+          "price": "4500.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Secadores de Piso (42 cm)",
+          "slug": "secadores-de-piso-42cm",
+          "description": "",
+          "unit": "1 u.",
+          "price": "5000.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Secadores de Piso (30 cm)",
+          "slug": "secadores-de-piso-30cm",
+          "description": "",
+          "unit": "1 u.",
+          "price": "4000.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Escobillas Solas",
+          "slug": "escobillas-solas",
+          "description": "",
+          "unit": "1 u.",
+          "price": "3000.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Escobillas con Vaso",
+          "slug": "escobillas-con-vaso",
+          "description": "",
+          "unit": "1 u.",
+          "price": "4000.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Rastrillo",
+          "slug": "rastrillo",
+          "description": "",
+          "unit": "1 u.",
+          "price": "3000.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Tachos de Basura 5 Litros",
+          "slug": "tachos-de-basura-5-litros",
+          "description": "",
+          "unit": "1 u.",
+          "price": "4000.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Cepillo de Ropa",
+          "slug": "cepillo-de-ropa",
+          "description": "",
+          "unit": "1 u.",
+          "price": "3300.00",
+          "stock": 50,
+          "is_active": true
+        }
+      ]
+    },
+    {
+      "name": "Esponjas, Trapos y Paños de Limpieza",
+      "slug": "esponjas-trapos-y-panos-de-limpieza",
+      "sort_order": 4,
+      "products": [
+        {
+          "name": "Esponja de Acero",
+          "slug": "esponja-de-acero",
+          "description": "",
+          "unit": "1 u.",
+          "price": "600.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Esponja Chata Romyl",
+          "slug": "esponja-chata-romyl",
+          "description": "",
+          "unit": "1 u.",
+          "price": "600.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Esponja Salva Uñas",
+          "slug": "esponja-salva-unas",
+          "description": "",
+          "unit": "1 u.",
+          "price": "800.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Rejilla de Limpieza",
+          "slug": "rejilla-de-limpieza",
+          "description": "",
+          "unit": "1 u.",
+          "price": "1200.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Trapo de Piso",
+          "slug": "trapo-de-piso",
+          "description": "",
+          "unit": "1 u.",
+          "price": "1500.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Franela Sino (40x50 cm)",
+          "slug": "franela-sino-40x50cm",
+          "description": "",
+          "unit": "1 u.",
+          "price": "1600.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Valerianas",
+          "slug": "valerianas",
+          "description": "",
+          "unit": "1 u.",
+          "price": "1000.00",
+          "stock": 50,
+          "is_active": true
+        }
+      ]
+    },
+    {
+      "name": "Línea Automotor",
+      "slug": "linea-automotor",
+      "sort_order": 5,
+      "products": [
+        {
+          "name": "Shampoo para Auto",
+          "slug": "shampoo-para-auto-1l",
+          "description": "",
+          "unit": "1 Litro",
+          "price": "2000.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Silicona en Gel",
+          "slug": "silicona-en-gel-1l",
+          "description": "",
+          "unit": "1 Litro",
+          "price": "14000.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Revividor",
+          "slug": "revividor-1l",
+          "description": "",
+          "unit": "1 Litro",
+          "price": "18000.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Esponja para Auto",
+          "slug": "esponja-para-auto",
+          "description": "",
+          "unit": "1 u.",
+          "price": "2200.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Hidroviolín Auto (Base Plástica)",
+          "slug": "hidroviolin-auto-base-plastica",
+          "description": "",
+          "unit": "1 u.",
+          "price": "4000.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Cepillo Lavamax (Auto)",
+          "slug": "cepillo-lavamax-auto",
+          "description": "",
+          "unit": "1 u.",
+          "price": "3800.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Cepillo Violín de Autos",
+          "slug": "cepillo-violin-de-autos",
+          "description": "",
+          "unit": "1 u.",
+          "price": "3800.00",
+          "stock": 50,
+          "is_active": true
+        }
+      ]
+    },
+    {
+      "name": "Bazar, Fragancias y Artículos Varios",
+      "slug": "bazar-fragancias-y-articulos-varios",
+      "sort_order": 6,
+      "products": [
+        {
+          "name": "Cubeteras (Pack x2)",
+          "slug": "cubeteras-pack-x2",
+          "description": "",
+          "unit": "1 u. / Pack x2",
+          "price": "3000.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Broches para Ropa (x12)",
+          "slug": "broches-para-ropa-x12",
+          "description": "",
+          "unit": "Pack x12",
+          "price": "1500.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Jabonera Simple",
+          "slug": "jabonera-simple",
+          "description": "",
+          "unit": "1 u.",
+          "price": "2000.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Jabonera con Tapa",
+          "slug": "jabonera-con-tapa",
+          "description": "",
+          "unit": "1 u.",
+          "price": "1200.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Jabones Tocador",
+          "slug": "jabones-tocador",
+          "description": "",
+          "unit": "1 u.",
+          "price": "1400.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Jabón Blanco (x1)",
+          "slug": "jabon-blanco-x1",
+          "description": "",
+          "unit": "1 u.",
+          "price": "3500.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Jabón Blanco (x2)",
+          "slug": "jabon-blanco-x2",
+          "description": "",
+          "unit": "Pack x2",
+          "price": "3000.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Repuesto de Aroma",
+          "slug": "repuesto-de-aroma",
+          "description": "",
+          "unit": "1 u.",
+          "price": "5500.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Perfumina para Ropa",
+          "slug": "perfumina-para-ropa",
+          "description": "",
+          "unit": "1 u.",
+          "price": "4000.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Encendedores",
+          "slug": "encendedores",
+          "description": "",
+          "unit": "1 u.",
+          "price": "500.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Bolsa Consorcio (60x80 cm)",
+          "slug": "bolsa-consorcio-60x80cm",
+          "description": "",
+          "unit": "1 u.",
+          "price": "1200.00",
+          "stock": 50,
+          "is_active": true
+        },
+        {
+          "name": "Bolsa Consorcio (80x110 cm)",
+          "slug": "bolsa-consorcio-80x110cm",
+          "description": "",
+          "unit": "1 u.",
+          "price": "3000.00",
+          "stock": 50,
+          "is_active": true
+        }
+      ]
+    }
+  ]
+}

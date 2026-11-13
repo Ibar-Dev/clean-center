@@ -15,7 +15,7 @@ reservas, stock y catálogo.
 | Frontend  | Angular 22 (standalone, signals, zoneless) · TypeScript · CSS             |
 | Auth      | JWT + Argon2 (solo administración, sin registro público)                   |
 | Deploy    | Docker / Docker Compose · Nginx como reverse proxy · volumen `/app/data`   |
-| Calidad   | pytest (38 tests) · Ruff · build de producción de Angular · sanity check E2E |
+| Calidad   | pytest (59 tests) · Ruff · build de producción de Angular · sanity check E2E |
 
 Compatible con **Python 3.12 y 3.13**. La imagen Docker usa Python 3.13.
 
@@ -89,8 +89,12 @@ uv run uvicorn app.main:app --reload
 - Docs: <http://localhost:8000/api/docs>
 - Health: <http://localhost:8000/api/health>
 
-El arranque crea las tablas, activa WAL y siembra categorías/productos de ejemplo y el
-usuario administrador definido en `ADMIN_USERNAME` / `ADMIN_PASSWORD`.
+El arranque crea las tablas, activa WAL y siembra el catálogo inicial desde
+`backend/app/data/catalog_seed.json`: 6 categorías ordenadas por `sort_order` y 68 productos
+reales. El seed es idempotente y **insert-if-missing por `slug`**: nunca pisa precios, stock,
+nombres ni el estado activo/inactivo que se hayan ajustado desde `/admin`. Todos los SKUs se
+cargan con `stock: 50` como valor inicial para que Karen los ajuste desde el panel. También
+crea el usuario administrador definido en `ADMIN_USERNAME` / `ADMIN_PASSWORD`.
 
 ### 3. Frontend
 
@@ -122,7 +126,7 @@ Desde el panel podés:
 
 ```bash
 cd backend
-uv run pytest            # 38 tests
+uv run pytest            # 59 tests
 uv run ruff check .
 uv run ruff format --check .
 ```
@@ -132,10 +136,11 @@ cd frontend
 npm run build -- --configuration production
 ```
 
-Los tests cubren: configuración pública sin secretos, autenticación JWT, catálogo,
-creación de reservas con descuento atómico de stock, ventana de retiro, cancelación con
-reposición de stock, transiciones de estado del admin, CRUD de productos, snapshots de
-precio, formato de WhatsApp y modo WAL de SQLite.
+Los tests cubren: configuración pública sin secretos, autenticación JWT, catálogo, seed del
+catálogo (idempotencia y no-sobrescritura de ediciones del admin), creación de reservas con
+descuento atómico de stock, idempotencia de reservas ante reintentos, ventana de retiro,
+cancelación con reposición de stock, transiciones de estado del admin, CRUD de productos,
+snapshots de precio, formato de WhatsApp y modo WAL de SQLite.
 
 ---
 
@@ -320,7 +325,7 @@ probá periódicamente la restauración.
 | GET    | `/api/categories`                   | Categorías                                    |
 | GET    | `/api/products`                     | Catálogo paginado, búsqueda y categoría       |
 | GET    | `/api/products/{id}`                | Detalle de producto                           |
-| POST   | `/api/reservations`                 | Crear reserva (descuenta stock)               |
+| POST   | `/api/reservations`                 | Crear reserva (descuenta stock; `idempotency_key` opcional) |
 | POST   | `/api/reservations/lookup`          | Consultar por código + email                  |
 | POST   | `/api/reservations/{code}/cancel`   | Cancelar y reponer stock                      |
 | POST   | `/api/auth/login`                   | Login admin (JWT)                             |
@@ -347,7 +352,7 @@ probá periódicamente la restauración.
 
 El frontend carga `GET /api/config` al iniciar y usa esos valores para:
 
-- Nombre, razón social, CUIT, dirección, teléfono, email y horarios del footer.
+- Nombre, razón social, dirección, teléfono, email y horarios del footer.
 - Textos legales (T&C y privacidad) y versiones de los documentos.
 - Ventana de retiro (mínimo de anticipación y vencimiento).
 - Disponibilidad del envío por WhatsApp.
@@ -358,7 +363,7 @@ Variables disponibles:
 | ------------------------------ | ------------------------------------------------ |
 | `STORE_NAME`                   | Nombre comercial                                 |
 | `STORE_LEGAL_NAME`             | Razón social                                     |
-| `STORE_CUIT`                   | CUIT                                             |
+| `STORE_CUIT`                   | CUIT (se conserva en la API; no se muestra en la UI) |
 | `STORE_ADDRESS`                | Dirección de retiro                              |
 | `STORE_PHONE` / `STORE_EMAIL`  | Contacto                                         |
 | `STORE_HOURS`                  | Horario de atención                              |
@@ -383,6 +388,50 @@ settings completo ni expone JWT, contraseñas o `DATABASE_URL`.
 - Aclaración de pago en el local.
 
 No se usa la API de Meta: el cliente abre WhatsApp y **envía el mensaje manualmente**.
+
+---
+
+## Notificaciones al crear una reserva
+
+Al confirmar una reserva, el backend encola dos tareas en `BackgroundTasks` (después de
+responder y de commitear en SQLite):
+
+1. **Email al cliente** con el código de reserva, productos, total, dirección y horarios.
+2. **Email de aviso a `ADMIN_EMAIL`** (o a `STORE_EMAIL` si queda vacío) con los datos del
+   cliente y la lista de productos a preparar.
+3. **Mensaje de Telegram** al chat configurado, si `TELEGRAM_BOT_TOKEN` y
+   `TELEGRAM_CHAT_ID` están presentes.
+
+Ninguna notificación puede hacer fallar ni revertir la reserva: si falta configuración o
+el proveedor falla/timeout (10 s), se registra un warning en Loguru y se continúa.
+
+### Email (SMTP)
+
+| Variable        | Default | Uso                                              |
+| --------------- | ------- | ------------------------------------------------ |
+| `SMTP_HOST`     | vacío   | Servidor SMTP. Vacío deshabilita el envío.       |
+| `SMTP_PORT`     | `587`   | Puerto SMTP.                                     |
+| `SMTP_USER`     | vacío   | Usuario para autenticación (opcional).           |
+| `SMTP_PASSWORD` | vacío   | Contraseña o App Password.                       |
+| `SMTP_FROM`     | vacío   | Remitente. Debe coincidir con `SMTP_USER`.       |
+| `SMTP_TLS`      | `true`  | Usa STARTTLS (puerto 587).                       |
+| `ADMIN_EMAIL`   | vacío   | Recibe el aviso de nuevos pedidos.               |
+
+Para Gmail: `SMTP_HOST=smtp.gmail.com`, `SMTP_PORT=587`, `SMTP_TLS=true` y una
+**contraseña de aplicación** de 16 caracteres (requiere verificación en 2 pasos). La
+contraseña normal de la cuenta es rechazada.
+
+### Telegram
+
+1. Crear un bot con `@BotFather` y copiar el token en `TELEGRAM_BOT_TOKEN`.
+2. Iniciar una conversación con el bot y obtener el `chat_id` (por ejemplo con
+   `https://api.telegram.org/bot<TOKEN>/getUpdates`) en `TELEGRAM_CHAT_ID`.
+
+Sin token o sin chat, la notificación se omite silenciosamente.
+
+> El `BackgroundTasks` de FastAPI se ejecuta con el `TestClient` en los tests, por lo que
+> `conftest.py` deja `SMTP_HOST`, `ADMIN_EMAIL`, `TELEGRAM_BOT_TOKEN` y
+> `TELEGRAM_CHAT_ID` vacíos para evitar envíos reales.
 
 ---
 
@@ -411,6 +460,9 @@ La aplicación incluye:
 
 - Stock se descuenta de forma atómica (`UPDATE ... WHERE stock >= cantidad RETURNING`)
   al crear la reserva y se repone al cancelar (cliente o admin).
+- Reservas idempotentes: si el cliente reintenta tras un corte de red con la misma
+  `idempotency_key` (UUID que el frontend guarda en `sessionStorage`), el backend devuelve la
+  reserva existente con `200` sin volver a descontar stock. Una reserva nueva responde `201`.
 - Los ítems de reserva guardan **snapshot** de nombre, unidad y precio: cambios
   posteriores de precio no alteran reservas existentes.
 - Códigos `CC-XXXXXX` con alfabeto sin caracteres ambiguos (`0/O`, `1/I`).

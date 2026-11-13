@@ -41,8 +41,8 @@ import { LegalService } from '../core/services/legal.service';
               </p>
               <h3>1. Identificación del comercio</h3>
               <p>
-                {{ config.config().store_legal_name }}, CUIT {{ config.config().store_cuit }},
-                con domicilio en {{ config.config().store_address }}. Correo electrónico:
+                {{ config.config().store_legal_name }}, con domicilio en
+                {{ config.config().store_address }}. Correo electrónico:
                 {{ config.config().store_email }}. Teléfono:
                 {{ config.config().store_phone }}.
               </p>
@@ -105,8 +105,8 @@ import { LegalService } from '../core/services/legal.service';
               </p>
               <h3>1. Responsable del tratamiento</h3>
               <p>
-                {{ config.config().store_legal_name }}, CUIT {{ config.config().store_cuit }},
-                domicilio {{ config.config().store_address }}. Contacto para datos personales:
+                {{ config.config().store_legal_name }}, domicilio
+                {{ config.config().store_address }}. Contacto para datos personales:
                 {{ config.config().store_email }}.
               </p>
 

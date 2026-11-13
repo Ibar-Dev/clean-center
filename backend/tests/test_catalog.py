@@ -6,7 +6,29 @@ def test_list_categories(client: TestClient) -> None:
 
     assert response.status_code == 200
     slugs = {category["slug"] for category in response.json()}
-    assert {"hogar", "desinfectantes", "industrial", "accesorios"} <= slugs
+    assert {
+        "papeleria-y-rollos-de-cocina",
+        "productos-quimicos-y-limpieza-liquida",
+        "escobas-palas-y-utensilios-de-limpieza",
+        "esponjas-trapos-y-panos-de-limpieza",
+        "linea-automotor",
+        "bazar-fragancias-y-articulos-varios",
+    } <= slugs
+
+
+def test_categories_are_ordered_by_sort_order(client: TestClient) -> None:
+    response = client.get("/api/categories")
+
+    assert response.status_code == 200
+    slugs = [category["slug"] for category in response.json()]
+    assert slugs[:6] == [
+        "papeleria-y-rollos-de-cocina",
+        "productos-quimicos-y-limpieza-liquida",
+        "escobas-palas-y-utensilios-de-limpieza",
+        "esponjas-trapos-y-panos-de-limpieza",
+        "linea-automotor",
+        "bazar-fragancias-y-articulos-varios",
+    ]
 
 
 def test_list_products_paginated(client: TestClient) -> None:
@@ -21,21 +43,21 @@ def test_list_products_paginated(client: TestClient) -> None:
 
 
 def test_search_products(client: TestClient) -> None:
-    response = client.get("/api/products?search=detergente")
+    response = client.get("/api/products?search=papel")
 
     assert response.status_code == 200
     data = response.json()
-    assert data["total"] >= 2
-    assert all("detergente" in item["name"].lower() for item in data["items"])
+    assert data["total"] >= 4
+    assert all("papel" in item["name"].lower() for item in data["items"])
 
 
 def test_filter_products_by_category(client: TestClient) -> None:
-    response = client.get("/api/products?category=industrial")
+    response = client.get("/api/products?category=linea-automotor")
 
     assert response.status_code == 200
     data = response.json()
     assert data["total"] >= 1
-    assert all(item["category"]["slug"] == "industrial" for item in data["items"])
+    assert all(item["category"]["slug"] == "linea-automotor" for item in data["items"])
 
 
 def test_product_detail(client: TestClient) -> None:

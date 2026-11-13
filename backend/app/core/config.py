@@ -9,6 +9,7 @@ BACKEND_DIR = Path(__file__).resolve().parents[2]
 REPO_DIR = BACKEND_DIR.parent
 DATA_DIR = BACKEND_DIR / "data"
 ENV_FILE = REPO_DIR / ".env"
+CATALOG_SEED_FILE = BACKEND_DIR / "app" / "data" / "catalog_seed.json"
 
 DEFAULT_JWT_SECRET = "dev-only-secret-change-me-0123456789abcdef"
 DEFAULT_ADMIN_PASSWORD = "change-me-now"
@@ -34,6 +35,8 @@ class Settings(BaseSettings):
     admin_username: str = "admin"
     admin_password: str = DEFAULT_ADMIN_PASSWORD
 
+    catalog_seed_path: Path = CATALOG_SEED_FILE
+
     cors_origins: str = "http://localhost:4200"
     rate_limit_enabled: bool = True
     reservation_rate_limit: str = "5/minute"
@@ -46,7 +49,7 @@ class Settings(BaseSettings):
     store_cuit: str = Field(default="30-00000000-0", min_length=8, max_length=20)
     store_address: str = Field(default="Dirección a configurar", min_length=3, max_length=250)
     store_phone: str = Field(default="+54 11 0000-0000", min_length=6, max_length=40)
-    store_email: EmailStr = "Karentorresbarreiro@gmail.com"
+    store_email: EmailStr = "admin@cleancenter.com.ar"
     store_hours: str = Field(
         default="Lun a Vie de 09:00 a 18:00, Sáb de 09:00 a 13:00",
         min_length=3,
@@ -62,6 +65,19 @@ class Settings(BaseSettings):
 
     # WhatsApp (solo enlace wa.me, sin envío automático)
     whatsapp_phone: str = ""
+
+    # Email transaccional (SMTP estándar). Si SMTP_HOST está vacío, no se envía nada.
+    smtp_host: str = ""
+    smtp_port: int = Field(default=587, ge=1, le=65535)
+    smtp_user: str = ""
+    smtp_password: str = ""
+    smtp_from: str = ""
+    smtp_tls: bool = True
+    admin_email: str = ""  # destinatario de avisos de nuevos pedidos; fallback: store_email
+
+    # Notificaciones instantáneas por Telegram. Si falta el token o el chat, se omite.
+    telegram_bot_token: str = ""
+    telegram_chat_id: str = ""
 
     # Logging
     log_level: str = "INFO"
