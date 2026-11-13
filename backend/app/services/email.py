@@ -1,4 +1,5 @@
 import smtplib
+import ssl
 from email.message import EmailMessage
 
 from loguru import logger
@@ -10,6 +11,13 @@ from app.services.whatsapp import format_ars, format_datetime_ar
 
 SMTP_TIMEOUT_SECONDS = 10
 EMAIL_ADAPTER = TypeAdapter(EmailStr)
+
+
+def _mask_email(value: str) -> str:
+    local, sep, domain = value.partition("@")
+    if not sep:
+        return "***"
+    return f"{local[:1]}***@{domain}"
 
 
 def _valid_email(value: str) -> str | None:
@@ -118,30 +126,46 @@ def send_email(
         )
         return False
 
-    message = EmailMessage()
-    message["From"] = sender
-    message["To"] = recipient
-    message["Subject"] = subject
-    message.set_content(body)
+    if config.smtp_user and not config.smtp_tls:
+        logger.bind(event="email.insecure_auth", to=_mask_email(recipient)).warning(
+            "SMTP con autenticación sin TLS: se omite el envío para no exponer credenciales"
+        )
+        return False
 
     try:
+        message = EmailMessage()
+        message["From"] = sender
+        message["To"] = recipient
+        message["Subject"] = subject
+        message.set_content(body)
+
         with smtplib.SMTP(
             config.smtp_host,
             config.smtp_port,
             timeout=SMTP_TIMEOUT_SECONDS,
         ) as smtp:
             if config.smtp_tls:
-                smtp.starttls()
+                smtp.starttls(context=ssl.create_default_context())
             if config.smtp_user:
                 smtp.login(config.smtp_user, config.smtp_password)
             smtp.send_message(message)
+    except ValueError as exc:
+        logger.bind(
+            event="email.invalid_message",
+            to=_mask_email(recipient),
+            error=type(exc).__name__,
+        ).warning("Mensaje de email inválido: no se envía")
+        return False
     except (OSError, smtplib.SMTPException) as exc:
-        logger.bind(event="email.send_failed", to=recipient).warning(
-            "No se pudo enviar el email: {}", exc
-        )
+        logger.bind(
+            event="email.send_failed",
+            to=_mask_email(recipient),
+            error=type(exc).__name__,
+            smtp_code=getattr(exc, "smtp_code", None),
+        ).warning("No se pudo enviar el email")
         return False
 
-    logger.bind(event="email.sent", to=recipient).info("Email enviado")
+    logger.bind(event="email.sent", to=_mask_email(recipient)).info("Email enviado")
     return True
 
 

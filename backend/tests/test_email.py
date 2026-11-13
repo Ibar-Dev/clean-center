@@ -1,4 +1,5 @@
 import smtplib
+import ssl
 from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 from typing import Any, ClassVar
@@ -23,18 +24,22 @@ class FakeSMTP:
         self.port = port
         self.timeout = timeout
         self.started_tls = False
+        self.tls_context: ssl.SSLContext | None = None
         self.login_credentials: tuple[str, str] | None = None
         self.messages: list[Any] = []
+        self.closed = False
         FakeSMTP.instances.append(self)
 
     def __enter__(self) -> "FakeSMTP":
         return self
 
     def __exit__(self, *_exc: object) -> bool:
+        self.closed = True
         return False
 
-    def starttls(self) -> None:
+    def starttls(self, *, context: ssl.SSLContext | None = None) -> None:
         self.started_tls = True
+        self.tls_context = context
 
     def login(self, user: str, password: str) -> None:
         self.login_credentials = (user, password)
@@ -149,6 +154,126 @@ def test_send_email_does_not_raise_on_smtp_error(monkeypatch: pytest.MonkeyPatch
         )
         is False
     )
+
+
+def test_send_email_uses_timeout_and_closes_connection(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr("app.services.email.smtplib.SMTP", FakeSMTP)
+
+    assert (
+        send_email(
+            to="ana@example.com",
+            subject="Hola",
+            body="Texto",
+            current_settings=_settings(),
+        )
+        is True
+    )
+
+    smtp = FakeSMTP.instances[0]
+    assert smtp.timeout == 10
+    assert smtp.closed is True
+
+
+def test_send_email_verifies_tls_certificate(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr("app.services.email.smtplib.SMTP", FakeSMTP)
+
+    assert (
+        send_email(
+            to="ana@example.com",
+            subject="Hola",
+            body="Texto",
+            current_settings=_settings(),
+        )
+        is True
+    )
+
+    context = FakeSMTP.instances[0].tls_context
+    assert context is not None
+    assert context.verify_mode == ssl.CERT_REQUIRED
+    assert context.check_hostname is True
+
+
+def test_send_email_rejects_header_injection(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr("app.services.email.smtplib.SMTP", FakeSMTP)
+
+    result = send_email(
+        to="ana@example.com",
+        subject="Hola\r\nBcc: evil@example.com",
+        body="Texto",
+        current_settings=_settings(),
+    )
+
+    assert result is False
+    assert FakeSMTP.instances == []
+
+
+def test_send_email_is_noop_with_invalid_recipient(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    def _unexpected(*_args: object, **_kwargs: object) -> None:
+        raise AssertionError("No debería abrirse una conexión SMTP")
+
+    monkeypatch.setattr("app.services.email.smtplib.SMTP", _unexpected)
+
+    assert (
+        send_email(
+            to="no-es-un-email",
+            subject="Hola",
+            body="Texto",
+            current_settings=_settings(),
+        )
+        is False
+    )
+
+
+def test_send_email_refuses_login_without_tls(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    def _unexpected(*_args: object, **_kwargs: object) -> None:
+        raise AssertionError("No debería abrirse una conexión SMTP sin TLS")
+
+    monkeypatch.setattr("app.services.email.smtplib.SMTP", _unexpected)
+
+    assert (
+        send_email(
+            to="ana@example.com",
+            subject="Hola",
+            body="Texto",
+            current_settings=_settings(smtp_tls=False),
+        )
+        is False
+    )
+
+
+@pytest.mark.parametrize("smtp_cls", [FakeSMTP, FailingSMTP])
+def test_send_email_masks_recipient_in_logs(
+    monkeypatch: pytest.MonkeyPatch,
+    smtp_cls: type[FakeSMTP],
+) -> None:
+    from loguru import logger
+
+    monkeypatch.setattr("app.services.email.smtplib.SMTP", smtp_cls)
+    records: list[str] = []
+    sink_id = logger.add(
+        lambda message: records.append(str(message)),
+        format="{message} | {extra}",
+        level="DEBUG",
+    )
+    try:
+        send_email(
+            to="ana@example.com",
+            subject="Hola",
+            body="Texto",
+            current_settings=_settings(),
+        )
+    finally:
+        logger.remove(sink_id)
+
+    joined = "".join(records)
+    assert "ana@example.com" not in joined
+    assert "a***@example.com" in joined
 
 
 def test_send_reservation_emails_notifies_customer_and_admin(
